@@ -1,4 +1,8 @@
 .env
 *.env
-config/rclone.conf
+.env*
+data/
+config/*
+!config/.gitkeep
 .superpowers/
+.DS_Store

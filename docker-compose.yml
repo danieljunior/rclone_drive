@@ -1,7 +1,6 @@
 services:
   config:
     image: rclone/rclone:latest
-    container_name: rclone_config
     stdin_open: true
     tty: true
     ports:
@@ -10,17 +9,20 @@ services:
       - ./config:/config/rclone
     command:
       - "config"
+    profiles:
+      - manual
 
   upload:
     image: rclone/rclone:latest
-    container_name: rclone_upload
     volumes:
-      - ./config:/config/rclone:ro
+      - ./config:/config/rclone
       - ${LOCAL_PATH:-./data}:/data:ro
     command:
       - "copy"
       - "/data"
-      - "${RCLONE_REMOTE_NAME:-gdrive}:${REMOTE_PATH:-backup}"
+      - "${RCLONE_REMOTE_NAME:-gdrive}:${REMOTE_PATH-backup}"
       - "--progress"
       - "--fast-list"
       - "--drive-chunk-size=32M"
+    profiles:
+      - manual
