@@ -1,0 +1,26 @@
+services:
+  config:
+    image: rclone/rclone:latest
+    container_name: rclone_config
+    stdin_open: true
+    tty: true
+    ports:
+      - "53682:53682"
+    volumes:
+      - ./config:/config/rclone
+    command:
+      - "config"
+
+  upload:
+    image: rclone/rclone:latest
+    container_name: rclone_upload
+    volumes:
+      - ./config:/config/rclone:ro
+      - ${LOCAL_PATH:-./data}:/data:ro
+    command:
+      - "copy"
+      - "/data"
+      - "${RCLONE_REMOTE_NAME:-gdrive}:${REMOTE_PATH:-backup}"
+      - "--progress"
+      - "--fast-list"
+      - "--drive-chunk-size=32M"
